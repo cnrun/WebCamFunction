@@ -17,7 +17,7 @@ namespace cnrun.dchwebcamdownload
         private static string BurgNordUrl="https://www.dc-hohenneuffen.de/cam/armin/hohenneuffen-vga.jpg";
         private static string GrabestettenUrl="http://www.grabenstetten.info/webcam/grabicam.jpg";
         [FunctionName("WebCamDCHDownload")]
-        public async Task Run([TimerTrigger("0 */1 6-17 * * *")] TimerInfo myTimer,
+        public async Task Run([TimerTrigger("0 */10 6-17 * * *")] TimerInfo myTimer,
                               [Blob("webcam/start-west/sw-{DateTime}.jpg", FileAccess.Write)] Stream StartWestStream,
                               [Blob("webcam/start-nord/sn-{DateTime}.jpg", FileAccess.Write)] Stream StartNordStream,
                               [Blob("webcam/gebiet-west/gw-{DateTime}.jpg", FileAccess.Write)] Stream GebietWestStream,
@@ -27,6 +27,7 @@ namespace cnrun.dchwebcamdownload
                               )
         {
             var client = new HttpClient();
+            client.Timeout = TimeSpan.FromSeconds(15);
             var tasks = new []{
                 (await client.GetAsync(StartWestUrl)).Content.CopyToAsync(StartWestStream),
                 (await client.GetAsync(StartNordUrl)).Content.CopyToAsync(StartNordStream),
